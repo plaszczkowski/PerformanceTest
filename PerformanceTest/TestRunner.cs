@@ -16,8 +16,9 @@ namespace PerformanceTest
             {
                 Console.WriteLine($"Running tests for file: {file}");
 
-                results.Add(RunSingleTest(file, "Original Method", OriginalMethod.Execute));
-                results.Add(RunSingleTest(file, "Batch Method", BatchMethod.Execute));
+                results.Add(RunSingleTest(file, nameof(OriginalMethod), OriginalMethod.Execute));
+                results.Add(RunSingleTest(file, nameof(BatchMethod), BatchMethod.Execute));
+                results.Add(RunSingleTest(file, nameof(StreamingMemoryMappedFileWorkerMethod), StreamingMemoryMappedFileWorkerMethod.Execute));
             }
             return results;
         }
