@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PerformanceTest.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace PerformanceTest.Methods
                 while (true)
                 {
                     var ioStopwatch = Stopwatch.StartNew();
-                    var readVal = streamReader.ReadToEnd();
+                    var readVal = streamReader.Read();
                     ioStopwatch.Stop();
                     ioTime += ioStopwatch.ElapsedMilliseconds;
                     ioOperations++;
@@ -39,7 +40,7 @@ namespace PerformanceTest.Methods
 
                     var character = (char)readVal;
 
-                    if (prev != '\r' && == '\n')
+                    if (prev != '\r' && character == '\n')
                     {
                         stringBuilder.Append(' '); // Replace newline with space
                     }
@@ -66,14 +67,14 @@ namespace PerformanceTest.Methods
                     linesProcessed++;
                 }
             }
-            finally 
+            finally
             {
-                // Clean up resources if needed and exeptions
+                // Clean up resources if needed and exceptions
             }
 
             stopwatch.Stop(); // Stop timing
 
-            var throughput = MetricsCalculator.CalculateThroughput(filePath, stopwatch.ElapsedMilliseconds);
+            var throughput = MetricsCalculator.CalculateThroughputMBPerSecond(filePath, stopwatch.ElapsedMilliseconds);
             var linesPerSecond = MetricsCalculator.CalculateLinesPerSecond(linesProcessed, stopwatch.ElapsedMilliseconds);
 
             var result = new TestResult(
@@ -82,7 +83,7 @@ namespace PerformanceTest.Methods
                 executionTimeMilliseconds: stopwatch.ElapsedMilliseconds,
                 ioOperations: ioOperations,
                 memoryUsageBytes: GC.GetTotalMemory(true) - initialMemory,
-                troughputMBPerSecond: throughput,
+                throughputMBPerSecond: throughput,
                 linesProcessed: linesProcessed,
                 linesPerSecond: linesPerSecond,
                 ioTimeMilliseconds: ioTime

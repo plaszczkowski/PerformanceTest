@@ -14,22 +14,22 @@ namespace PerformanceTest
         public long ExecutionTimeMilliseconds { get; set; }
         public BigInteger IOOperations { get; set; }
         public long MemoryUsageBytes { get; set; }
-        public double TroughputMBPerSecond { get; set; }
+        public double ThroughputMBPerSecond { get; set; }
         public long LinesProcessed { get; set; }
         public double LinesPerSecond { get; set; }
         public long IOTimeMilliseconds { get; set; }
         public bool Failed { get; set; }
 
-    public TestResult(string filePath, string method, long executionTimeMilliseconds = 0,
-        BigInteger ioOperations = default, long memoryUsageBytes = 0, double troughputMBPerSecond = 0,
-        long linesProcessed = 0, double linesPerSecond = 0, long ioTimeMilliseconds = 0, bool failed = false)
+        public TestResult(string filePath, string method, long executionTimeMilliseconds = 0,
+            BigInteger ioOperations = default, long memoryUsageBytes = 0, double throughputMBPerSecond = 0,
+            long linesProcessed = 0, double linesPerSecond = 0, long ioTimeMilliseconds = 0, bool failed = false)
         {
             FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
             Method = method ?? throw new ArgumentNullException(nameof(method));
             ExecutionTimeMilliseconds = executionTimeMilliseconds;
             IOOperations = ioOperations;
             MemoryUsageBytes = memoryUsageBytes;
-            TroughputMBPerSecond = troughputMBPerSecond;
+            ThroughputMBPerSecond = throughputMBPerSecond;
             LinesProcessed = linesProcessed;
             LinesPerSecond = linesPerSecond;
             IOTimeMilliseconds = ioTimeMilliseconds;
@@ -40,7 +40,7 @@ namespace PerformanceTest
         {
             return $"File: {FilePath}, Method: {Method}, Execution Time: {ExecutionTimeMilliseconds} ms, " +
                    $"IO Operations: {IOOperations}, Memory Usage: {MemoryUsageBytes} bytes, " +
-                   $"Throughput: {TroughputMBPerSecond} MB/s, Lines Processed: {LinesProcessed}, " +
+                   $"Throughput: {ThroughputMBPerSecond} MB/s, Lines Processed: {LinesProcessed}, " +
                    $"Lines per Second: {LinesPerSecond}, IO Time: {IOTimeMilliseconds} ms, " +
                    $"Failed: {Failed}";
         }

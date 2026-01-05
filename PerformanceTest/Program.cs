@@ -1,12 +1,14 @@
-﻿namespace PerformanceTest
+﻿using PerformanceTest.Utilities;
+
+namespace PerformanceTest
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Performance Tests - Compering Processing Methods\n");
+            Console.WriteLine("Performance Tests - Comparing Processing Methods\n");
 
-            //Directotriesof test files
+            // Directories of test files
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var resultsFilePath = Path.Combine(baseDirectory, "PerformanceTestResults.txt");
 
@@ -16,14 +18,17 @@
                 Path.Combine(baseDirectory, "medium_test_file.txt"),
             };
 
+            Console.WriteLine("Creating test files...");
+            FileUtilities.CreateTestFile(testFiles);
+
             Console.WriteLine("Running tests...");
             var testRunner = new TestRunner();
             var results = testRunner.RunTests(testFiles);
 
-            Console.WriteLine("Writting results to a file ...");
-            MetricsLogger > WriteResultsToFile(results, resultsFilePath);
+            Console.WriteLine("Writing results to a file...");
+            MetricsLogger.WriteResultsToFile(results, resultsFilePath);
 
-            FileUtilities.CleanUpTestFiles(testFiles);
+            FileUtilities.CleanupTestFiles(testFiles);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace PerformanceTest
         {
             using var writer = new StreamWriter(filePath, false, Encoding.UTF8);
 
-            WriteEnvirormentInfo(writer);
+            WriteEnvironmentInfo(writer);
 
             var resultsGroupByFile = results.GroupBy(r => r.FilePath);
 
@@ -30,14 +30,18 @@ namespace PerformanceTest
 
                 foreach (var result in group)
                 {
-                    writer.WriteLine($"Method: {result.MethodName}");
+                    var ioPercentage = MetricsCalculator.CalculateIOPercentage(
+                        result.IOTimeMilliseconds,
+                        result.ExecutionTimeMilliseconds);
+
+                    writer.WriteLine($"Method: {result.Method}");
                     writer.WriteLine($"File Size: {fileSize}");
                     writer.WriteLine($"Execution Time (ms): {result.ExecutionTimeMilliseconds}");
                     writer.WriteLine($"Throughput (MB/s): {result.ThroughputMBPerSecond}");
                     writer.WriteLine($"Lines Processed: {result.LinesProcessed}");
                     writer.WriteLine($"Lines per Second: {result.LinesPerSecond}");
                     writer.WriteLine($"IO Time (ms): {result.IOTimeMilliseconds}");
-                    writer.WriteLine($"IO Percentage (%): {result.IOPercentage}");
+                    writer.WriteLine($"IO Percentage (%): {ioPercentage}");
                     writer.WriteLine($"Failed: {result.Failed}");
                     writer.WriteLine();
                 }
@@ -48,31 +52,36 @@ namespace PerformanceTest
             writer.WriteLine("File Path,Method Name,Execution Time (ms),Throughput (MB/s),Lines Processed,Lines per Second,IO Time (ms),IO Percentage (%),Failed");
             foreach (var result in results)
             {
-                writer.WriteLine($"{result.FilePath},{result.MethodName},{result.ExecutionTimeMilliseconds},{result.ThroughputMBPerSecond},{result.LinesProcessed},{result.LinesPerSecond},{result.IOTimeMilliseconds},{result.IOPercentage},{result.Failed}");
+                var ioPercentage = MetricsCalculator.CalculateIOPercentage(
+                    result.IOTimeMilliseconds,
+                    result.ExecutionTimeMilliseconds);
+
+                writer.WriteLine($"{result.FilePath},{result.Method},{result.ExecutionTimeMilliseconds},{result.ThroughputMBPerSecond},{result.LinesProcessed},{result.LinesPerSecond},{result.IOTimeMilliseconds},{ioPercentage},{result.Failed}");
             }
         }
 
-        private static void WriteEnvirormentInfo(StreamWriter writer) {
+        private static void WriteEnvironmentInfo(StreamWriter writer)
+        {
+            writer.WriteLine();
+
+            // RAM information
+            try
             {
-                writer.WriteLine();
-
-                // RAM information
-                try
-                {
-                    var totalMemory = GetTotalMemoryInBytes();
-
-                }
-                catch (Exception)
-                {
-
-                    throw                }
+                var totalMemory = GetTotalMemoryInBytes();
+                writer.WriteLine($"Total System Memory: {FormatBytes(totalMemory)}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving memory information: {ex.Message}");
+                throw;
             }
         }
+
         public static long GetTotalMemoryInBytes()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                return GetTotalMemoryOnWindows()
+                return GetTotalMemoryOnWindows();
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
@@ -93,7 +102,7 @@ namespace PerformanceTest
             }
             else
             {
-                throw new InvalidOperationException("Unable to retrive memory information via GlobalMemoryStatusEx.");
+                throw new InvalidOperationException("Unable to retrieve memory information via GlobalMemoryStatusEx.");
             }
         }
 
@@ -119,12 +128,12 @@ namespace PerformanceTest
             }
             catch
             {
-                // Ignore reade errors and fallback to sysinfo
+                // Ignore read errors and fallback to sysinfo
             }
-            throw new InvalidOperationException("Unable to retrive memory information from /proc/meminfo.");
+            throw new InvalidOperationException("Unable to retrieve memory information from /proc/meminfo.");
         }
 
-        [DllImport('kernel32.dll', CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
@@ -132,12 +141,12 @@ namespace PerformanceTest
         {
             public uint dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
             public uint dwMemoryLoad;
-            public ulong ullTotalPhys; // Total availble memory RAM
-            public ulong ullAvailPhys; // Availbible RAM
-            public ulong ulTotalPageFile;
-            public ulong ulAvailPageFile;
-            public ulong usTotalVirtual;
-            public ulong usAvailVirtual;
+            public ulong ullTotalPhys; // Total available memory RAM
+            public ulong ullAvailPhys; // Available RAM
+            public ulong ullTotalPageFile;
+            public ulong ullAvailPageFile;
+            public ulong ullTotalVirtual;
+            public ulong ullAvailVirtual;
             public ulong ullAvailExtendedVirtual;
         }
 

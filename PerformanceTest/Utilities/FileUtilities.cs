@@ -18,7 +18,7 @@ namespace PerformanceTest.Utilities
             }
         }
 
-        public static void CleanupTestFiels(string[] filePaths)
+        public static void CleanupTestFiles(string[] filePaths)
         {
             foreach (var filePath in filePaths)
             {
@@ -52,11 +52,11 @@ namespace PerformanceTest.Utilities
                     totalWrittenBytes += Encoding.UTF8.GetBytes(sampleLine).Length;
                 }
 
-                Console.WriteLine("Created test file: {filePath} ({FormatBytes(sizeBytes)})");
+                Console.WriteLine($"Created test file: {filePath} ({FormatBytes(totalWrittenBytes)})");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"failed to create file {filePath}: {ex.Message}");
+                Console.WriteLine($"Failed to create file {filePath}: {ex.Message}");
                 throw;
             }
         }
@@ -64,9 +64,10 @@ namespace PerformanceTest.Utilities
         private static long DetermineFileSize(string filePath)
         {
             var fileName = Path.GetFileName(filePath).ToLower();
-            if (filePath.Contains('small')) return 1L * 1024 * 1024; // 1 MB
+            if (fileName.Contains("small")) return 1L * 1024 * 1024; // 1 MB
+            if (fileName.Contains("medium")) return 10L * 1024 * 1024; // 10 MB
 
-            throw new ArgumentException($"Uknown file type for path: {filePath}");
+            throw new ArgumentException($"Unknown file type for path: {filePath}");
         }
 
         private static string FormatBytes(long bytes)
