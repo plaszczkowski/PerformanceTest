@@ -66,6 +66,9 @@ namespace PerformanceTest.Utilities
             var fileName = Path.GetFileName(filePath).ToLower();
             if (fileName.Contains("small")) return 1L * 1024 * 1024; // 1 MB
             if (fileName.Contains("medium")) return 10L * 1024 * 1024; // 10 MB
+            if (fileName.Contains("large")) return 100L * 1024 * 1024; // 100 MB
+            if (fileName.Contains("one_gb")) return 1L * 1024 * 1024 * 1024; // 1 GB
+            if (fileName.Contains("five_gb")) return 5L * 1024 * 1024 * 1024; // 5 GB
 
             throw new ArgumentException($"Unknown file type for path: {filePath}");
         }

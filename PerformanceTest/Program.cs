@@ -16,6 +16,9 @@ namespace PerformanceTest
             {
                 Path.Combine(baseDirectory, "small_test_file.txt"),
                 Path.Combine(baseDirectory, "medium_test_file.txt"),
+                Path.Combine(baseDirectory, "large_test_file.txt"),
+                Path.Combine(baseDirectory, "one_gb_test_file.txt"),
+                Path.Combine(baseDirectory, "five_gb_test_file.txt")
             };
 
             Console.WriteLine("Creating test files...");
@@ -27,6 +30,8 @@ namespace PerformanceTest
 
             Console.WriteLine("Writing results to a file...");
             MetricsLogger.WriteResultsToFile(results, resultsFilePath);
+
+            Console.WriteLine($"Results written to: {resultsFilePath}");
 
             FileUtilities.CleanupTestFiles(testFiles);
         }

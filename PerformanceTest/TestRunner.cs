@@ -17,7 +17,7 @@ namespace PerformanceTest
                 Console.WriteLine($"Running tests for file: {file}");
 
                 results.Add(RunSingleTest(file, "Original Method", OriginalMethod.Execute));
-
+                results.Add(RunSingleTest(file, "Batch Method", BatchMethod.Execute));
             }
             return results;
         }
